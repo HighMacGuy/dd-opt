@@ -13,10 +13,10 @@ end
 ddif = ARGV[0]
 ddof = ARGV[1]
 
-if !FileTest.exist?(ddif)
-  abort(ddif + " does not exist on the filesystem.")
-elsif !FileTest.exist?(ddof)
-  abort(ddof + " does not exist on the filesystem.")
+if !FileTest.blockdev?(ddif)
+  abort(ddif + " is not a block device.")
+elsif !FileTest.blockdev?(ddof)
+  abort(ddof + " is not a block device.")
 end
 
 ddbsmax_array =  ddbsmax.scan(/(\D*)(\d*)(.*)/)[0]
@@ -50,15 +50,56 @@ else
 end
 
 ddbsmax_bytes = ddbsmax_n * 2 ** power
+ddbsmax_bytes_length = ddbsmax_bytes.to_s.length 
 
-puts "ddbsmax_n: " + ddbsmax_n.to_s
-puts "ddbsmax_suffix: " + ddbsmax_suffix
-puts ddbsmax_bytes
+n = 1
+until n > ddbsmax_bytes
+  n = n * 2
+end
+effective_ddbsmax_bytes = n / 2
 
-stdout = `dd if=/dev/disk6s1 of=/dev/disk7s1 bs=256k count=1 2>&1`
-puts "foo"
-puts stdout
+stdout = `diskutil info #{ddif}`
+ddif_bytes = stdout.scan(/Total Size.*\((\d*) Bytes\)/)[0][0].to_i
+if effective_ddbsmax_bytes > ddif_bytes
+  abort("bs cannot be larger than dd infile")
+end
 
-bytes_per_sec = stdout.scan(/\((\d*) bytes\/sec\)/)[0][0]
-puts "Bytes/sec: " + bytes_per_sec
-puts "Bytes/sec x 2: " + (2 * bytes_per_sec.to_i).to_s
+stdout = `diskutil info #{ddof}`
+ddof_bytes = stdout.scan(/Total Size.*\((\d*) Bytes\)/)[0][0].to_i
+if effective_ddbsmax_bytes > ddof_bytes
+  abort("bs cannot be larger than dd outfile")
+end
+
+z = 0
+results = Array.new()
+until z == 2
+  n = 1
+  until n > ddbsmax_bytes
+    if !system("sync")
+      abort("Command 'sync' failed.")
+    elsif !system("purge")
+      abort("Command 'purge' failed.")
+    end
+    count = effective_ddbsmax_bytes / n
+    stdout = `dd if=#{ddif} of=#{ddof} bs=#{n} count=#{count} 2>&1`
+    # puts stdout
+    bytes_per_sec = stdout.scan(/\((\d*) bytes\/sec\)/)[0][0]
+    padding = ddbsmax_bytes_length - n.to_s.length + 1
+    puts "bs: " + n.to_s + " " * padding + "Bytes/sec: " + bytes_per_sec
+    results = results + [[n, bytes_per_sec.to_i]]
+    n = n * 2
+  end
+  z = z + 1
+end
+avg_array = Array.new()
+grouped = results.group_by { |s| s[0] }
+p grouped
+grouped.each do |group|
+  avg = 0
+  group[1].each do |test|
+    avg = avg + test[1]
+  end
+  avg = avg / group[1].length.to_f
+  avg_array = avg_array + [[group[0], avg]]
+end
+p avg_array
