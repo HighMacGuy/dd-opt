@@ -1,4 +1,5 @@
 require 'os'
+require 'optparse'
 
 class BlockDevice
   attr_reader :path
@@ -52,13 +53,24 @@ class BlockDevice
 end
 
 ##
-# Parse arguments
+# Parse options and arguments
 ##
+
+help = "Usage: dd-opt.rb dd-infile dd-outfile [MAXBS] [ITERATIONS]
+        '-h', '--help', Display this screen.
+        MAXBS		Maximum value of dd command's 'bs' parameter to try, e.g. 512 or
+                          4k. Valid suffixes: k, m, g, t, p, e, z, y.
+        ITERATIONS	Number of times to iterate over all values of bs
+                          incrementing in powers of 2 upto MAXBS."
 
 if ARGV.length < 1
   abort("No dd infile specified.")
 elsif ARGV.length < 2
-  abort("No dd outfile specified.")
+  if ARGV[0] == "-h" || ARGV[0] == "--help"
+    puts help; exit
+  else
+    abort("No dd outfile specified.")
+  end
 elsif ARGV.length > 4
   abort("Too many arguments.")
 elsif ARGV.length == 2
