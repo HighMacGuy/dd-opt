@@ -56,12 +56,15 @@ end
 # Parse options and arguments
 ##
 
-help = "Usage: dd-opt.rb dd-infile dd-outfile [MAXBS] [ITERATIONS]
+help = "\nUsage: dd-opt.rb dd-infile dd-outfile [MAXBS] [ITERATIONS]
+
+        *** Important note: dd-outfile will be partially or wholly overwritten. ***  
+
         '-h', '--help', Display this screen.
         MAXBS		Maximum value of dd command's 'bs' parameter to try, e.g. 512 or
                           4k. Valid suffixes: k, m, g, t, p, e, z, y.
         ITERATIONS	Number of times to iterate over all values of bs
-                          incrementing in powers of 2 upto MAXBS."
+                          incrementing in powers of 2 upto MAXBS.\n\n"
 
 if ARGV.length < 1
   abort("No dd infile specified.")
