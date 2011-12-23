@@ -14,4 +14,6 @@ Using the command line, navigate to that folder and invoke dd-opt as follows:
 
 ## Copyright and licensing
 
-All code in dd-opt is (c) Sam Pablo Kuper unless stated otherwise and available under the GNU AFFERO GENERAL PUBLIC Version 3 (see license.txt) unless stated otherwise.
+All source code in dd-opt (and any binary derivatives made therefrom) is:
+* (c) Sam Pablo Kuper unless stated otherwise, and
+* available under the terms of the Gnu Affero General Public License Version 3 (see license.txt) unless stated otherwise.
