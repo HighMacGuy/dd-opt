@@ -1,5 +1,4 @@
 require 'os'
-require 'optparse'
 
 class BlockDevice
   attr_reader :path
