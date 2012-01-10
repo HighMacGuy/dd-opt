@@ -1,14 +1,33 @@
-# # # # # # # # #
-# /35/os.rb
+####
+# Code as per https://github.com/janlelis/zucker/blob/master/lib/zucker/os.rb
+# License as per https://github.com/janlelis/zucker/blob/master/MIT-LICENSE
 #
-# by               Jan Lelis
-# e-mail:          mail@janlelis.de
-# type/version:    ruby 
-# snippet url:     http://rbJL.net/35/os.rb
-# original post:   http://rbJL.net/35-how-to-properly-check-for-your-ruby-interpreter-version-and-os
-# license:         CC-BY (DE)
+# License
+# =======
 #
-# (c) 2010 Jan Lelis.
+# Copyright (c) 2010-2011 Jan Lelis
+# 
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+# 
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+# 
+# Code
+# ====
 
 require 'rbconfig'
 
@@ -27,27 +46,32 @@ module OS
   module_function
 
   def linux?
-    OS.is? /linux|cygwin/
+    OS.is?( /linux|cygwin/ )
   end
 
   def mac?
-    OS.is? /mac|darwin/
+    OS.is?( /mac|darwin/ )
   end
 
   def bsd?
-    OS.is? /bsd/
+    OS.is?( /bsd/ )
   end
 
   def windows?
-    OS.is? /mswin|win|mingw/
+    OS.is?( /mswin|mingw/ )
   end
 
   def solaris?
-    OS.is? /solaris|sunos/
+    OS.is?( /solaris|sunos/ )
   end
 
   def posix?
-    linux? or mac? or bsd? or solaris? or Process.respond_to?(:fork)
+    linux? or mac? or bsd? or solaris? or begin 
+        fork do end
+        true
+      rescue NotImplementedError, NoMethodError
+        false
+      end
   end
 
   #def symbian?
@@ -56,3 +80,5 @@ module OS
 
   # ...
 end
+
+# J-_-L
