@@ -7,8 +7,8 @@ class BlockDevice
   attr_reader :free_bytes
 
   def initialize(path)
-    if !FileTest.blockdev?(path)
-      abort(path + " is not a block device.")
+    if !FileTest.chardev?(path) && !FileTest.blockdev?(path)
+      abort(path + " is not a block device, raw device or character device.")
     else
       @path = path
 
@@ -56,6 +56,12 @@ end
 ##
 
 help = "\nUsage: dd-opt.rb dd-infile dd-outfile [MAXBS] [ITERATIONS]
+
+        Example 1: dd-opt.rb /dev/disk4s1 /dev/disk5s1 16m 3
+
+        Or, using raw devices for faster speed:
+
+        Example 2: dd-opt.rb /dev/rdisk4s1 /dev/rdisk5s1 16m 3
 
         *** Important note: dd-outfile will be partially or wholly overwritten. ***  
 
