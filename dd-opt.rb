@@ -1,4 +1,4 @@
-require 'os'
+require "./os.rb"
 
 class BlockDevice
   attr_reader :path
