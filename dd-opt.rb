@@ -82,11 +82,11 @@ elsif ARGV.length < 2
 elsif ARGV.length > 4
   abort("Too many arguments.")
 elsif ARGV.length == 2
-  ddbsmax = "4k"
-  iterations = "3"
+  ddbsmax = "4k"   # Make MAXBS default to 4k. (Why 4k? Cos it usually works for me.)
+  iterations = "3" # Make ITERATIONS default to 3 (Why 3? Cultural: "best of three".)
 elsif ARGV.length == 3
   ddbsmax = ARGV[2]
-  iterations = "3"
+  iterations = "3" # Make ITERATIONS default to 3 (Why 3? Cultural: "best of three".)
 elsif ARGV.length == 4
   ddbsmax = ARGV[2]
   iterations = ARGV[3]
