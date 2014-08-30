@@ -182,7 +182,11 @@ until z == iterations
     end
     count = effective_ddbsmax_bytes / ddbs
     stdout = `dd if=#{ddif.path} of=#{ddof.path} bs=#{ddbs} count=#{count} 2>&1`
-    bytes_per_sec = stdout.scan(/\((\d*) bytes\/sec\)/)[0][0]
+    if stdout.scan(/\((\d*) bytes\/sec\)/)[0] == nil
+      abort("Error: unexpected failure of `dd`.\n" + stdout)
+    else
+      bytes_per_sec = stdout.scan(/\((\d*) bytes\/sec\)/)[0][0]
+    end
     padding = ddbsmax_bytes_length - ddbs.to_s.length + 2
     iteration_padding = iterations.to_s.length - z.to_s.length + 2
     puts "Iteration: " + z.to_s + " " * iteration_padding + "bs: " + ddbs.to_s + " " * padding + "Bytes/sec: " + bytes_per_sec
