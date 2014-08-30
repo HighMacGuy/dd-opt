@@ -19,7 +19,11 @@ class BlockDevice
         @info = `diskutil info #{@path}`
 
         ## Initialise @mounted attribute
-        if    @info.scan(/Mounted:\s*(\w*)/)[0][0] == "Yes" then @mounted = true
+        if    @info.scan(/Mounted:\s*(\w*)/)[0] == nil then
+                abort("Error!" @path + " might be a device of a kind dd-opt is"\
+                        " not (yet!) equipped to handle, e.g. a pseudo-device."\
+                        " See https://github.com/sampablokuper/dd-opt/issues/4")
+        elsif @info.scan(/Mounted:\s*(\w*)/)[0][0] == "Yes" then @mounted = true
         elsif @info.scan(/Mounted:\s*(\w*)/)[0][0] == "No"  then @mounted = false
         else  abort("Could not determine whether " + @path + " is mounted.")
         end
